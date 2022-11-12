@@ -1,12 +1,19 @@
-"""Functions to format and query data."""
+"""Functions to process and query data."""
 
 from collections import defaultdict
 
 import pandas as pd
 
 
-def format_interventions_data(df):
-    """Format data loaded from `interventions.csv`."""
+def process_interventions_data(df):
+    """Process data loaded from `interventions.csv`.
+    
+    Args:
+        df: `interventions.csv` dataframe.
+    
+    Returns:
+        Augmented interventions data.
+    """
 
     # Convert columns to datetime
     df = df.apply(pd.to_datetime)
@@ -23,8 +30,16 @@ def format_interventions_data(df):
     return df
 
 
-def format_mobility_data(df, countries):
-    """Format data loaded from `Global_Mobility_Report.csv.gz`."""
+def process_mobility_data(df, countries):
+    """Process data loaded from `Global_Mobility_Report.csv.gz`.
+
+    Args:
+        df: `Global_Mobility_Report.csv.gz` dataframe.
+        countries: dictionary of country code and country name pairs.
+    
+    Returns:
+        Processed mobility data.
+    """
 
     # Lower case country code
     df["country_region_code"] = df["country_region_code"].str.lower()
@@ -61,8 +76,16 @@ def format_mobility_data(df, countries):
     return df
 
 
-def format_transport_data(df, countries):
-    """Format data loaded from `applemobilitytrends-2020-04-20.csv.gz`."""
+def process_transport_data(df, countries):
+    """Process data loaded from `applemobilitytrends-2020-04-20.csv.gz`.
+
+    Args:
+        df: `applemobilitytrends-2020-04-20.csv.gz` dataframe.
+        countries: dictionary of country code and country name pairs.
+    
+    Returns:
+        Processed transport data.
+    """
 
     # Select only rows in countries of interest
     df = df.loc[df.region.isin(countries.values())].reset_index(drop=True)
@@ -97,12 +120,12 @@ def get_pageviews(df, lang, topic):
     """Combines the views from desktop and mobile Wikipedia pages for a given language and topic.
 
     Args:
-        df: pageviews (dataframe)
-        lang: language code (string)
-        topic: page topic (string)
+        df: pageviews (dataframe).
+        lang: language code (string).
+        topic: page topic (string).
 
     Returns:
-        Series of dates and topic pageviews
+        Series of dates and topic pageviews.
     """
 
     # Select desktop and mobile pageviews
