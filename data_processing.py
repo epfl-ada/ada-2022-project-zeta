@@ -5,6 +5,22 @@ from collections import defaultdict
 import pandas as pd
 
 
+countries = {
+    "de": "Germany",
+    "dk": "Denmark",
+    "es": "Spain",
+    "fi": "Finland",
+    "fr": "France",
+    "it": "Italy",
+    "jp": "Japan",
+    "kr": "South Korea",
+    "nl": "Netherlands",
+    "no": "Norway",
+    "rs": "Serbia",
+    "se": "Sweden",
+}
+
+
 def process_interventions_data(df):
     """Process data loaded from `interventions.csv`.
     
@@ -30,7 +46,7 @@ def process_interventions_data(df):
     return df
 
 
-def process_mobility_data(df, countries):
+def process_mobility_data(df, countries=countries):
     """Process data loaded from `Global_Mobility_Report.csv.gz`.
 
     Args:
@@ -76,7 +92,7 @@ def process_mobility_data(df, countries):
     return df
 
 
-def process_transport_data(df, countries):
+def process_transport_data(df, countries=countries):
     """Process data loaded from `applemobilitytrends-2020-04-20.csv.gz`.
 
     Args:
