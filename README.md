@@ -1,5 +1,17 @@
 # How has political sentiment changed over the course of the pandemic?
 
+## Contents
+
+- `additional_datasets.ipynb` - notebook showcasing additional datasets and demonstrating that we can use the data in our analysis
+
+- `coronawiki.ipynb` - notebook containing an exploration and transformation of the CoronaWiki datasets
+
+- `data_processing.py` - helper functions to transform and query the CoronaWiki datasets
+
+- `initial_analysis.ipynb` - notebook containing a potential initial analysis of our data, showing that we are able to work with it
+
+- `japan_csv_data.html` - HTML script to download polling data for Japan
+
 ## Abstract
 
 During the COVID-19 pandemic, we saw that governments implemented different sanitary measures in order to reduce the strain on their health services. Governments balanced imposing sufficiently stringent measures while at the same time not depriving the populace of too many liberties in order to not lose the public’s support.
