@@ -38,10 +38,10 @@ def process_interventions_data(df):
     df["Response time"] = (
         df[["School closure", "Public events banned", "Lockdown"]].min(axis=1)
         - df["1st case"]
-    )
+    ).dt.days
 
     # Duration of abnormal mobility
-    df["Reduced mobility"] = df["Normalcy"] - df["Mobility"]
+    df["Reduced mobility"] = (df["Normalcy"] - df["Mobility"]).dt.days
 
     return df
 
