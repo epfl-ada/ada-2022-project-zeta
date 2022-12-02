@@ -31,7 +31,10 @@ def plot_mobility_response(df, labels=None):
     """Plot response time and duration of reduced mobility period of countries. Optionally group the countries by `labels`."""
 
     ax = sns.scatterplot(
-        x=df["Response time"], y=df["Reduced mobility"], hue=labels + 1
+        x=df["Response time"],
+        y=df["Reduced mobility"],
+        hue=labels + 1,
+        palette=sns.color_palette(n_colors=len(set(labels))),
     )
 
     for idx, row in df.iterrows():
