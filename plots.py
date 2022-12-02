@@ -30,7 +30,9 @@ def plot_silhouettes(X, k_min, k_max):
 def plot_mobility_response(df, labels=None):
     """Plot response time and duration of reduced mobility period of countries. Optionally group the countries by `labels`."""
 
-    ax = sns.scatterplot(x=df["Response time"], y=df["Reduced mobility"], hue=labels)
+    ax = sns.scatterplot(
+        x=df["Response time"], y=df["Reduced mobility"], hue=labels + 1
+    )
 
     for idx, row in df.iterrows():
         ax.text(row["Response time"] + 0.5, row["Reduced mobility"], idx)
