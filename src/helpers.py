@@ -204,6 +204,9 @@ def get_polling_data(country):
     # Assign poll date at end of fieldwork
     df["Date"] = pd.to_datetime(df["Fieldwork End"]).dt.to_period("M")
 
+    # Keep polls starting from 2019
+    df = df[df["Date"] >= "2019-01"]
+
     # Keep relevant columns
     df = df[["Date", "Sample Size"] + list(parties[country].keys())]
     # Rename columns
