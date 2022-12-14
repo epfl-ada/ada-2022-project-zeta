@@ -1,4 +1,4 @@
-"""Various helper functions to query data."""
+"""Various helper functions to get and query data."""
 
 from collections import defaultdict
 
@@ -60,3 +60,28 @@ def get_pageviews(df, lang, topic, measure="sum"):
     total_views = total_views.set_index("date")
 
     return total_views
+
+
+def get_polling_data(country):
+    """Get polling data for a given country.
+
+    Args:
+        country: country code
+    
+    Returns:
+        Polling data.
+    
+    Raises:
+        KeyError: data unavailable for given country
+    """
+
+    available_data = ["de", "dk", "es", "fi", "fr", "it", "nl", "no", "se"]
+
+    if country not in available_data:
+        raise KeyError("Data unavailable for given country.")
+
+    url = f"https://filipvanlaenen.github.io/eopaod/{country}.csv"
+
+    df = pd.read_csv(url, on_bad_lines="skip")
+
+    return df

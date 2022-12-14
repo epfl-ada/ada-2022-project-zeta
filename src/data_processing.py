@@ -19,7 +19,7 @@ countries = {
     "se": "Sweden",
 }
 
-# Mapping country codes to language codes of corresponding language in Wikipedia
+# Mapping country codes to language codes of corresponding Wikipedia language
 languages = {
     "de": "de",
     "dk": "da",
