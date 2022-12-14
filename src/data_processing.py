@@ -1,10 +1,9 @@
-"""Functions to process and query data."""
-
-from collections import defaultdict
+"""Functions to process the data."""
 
 import pandas as pd
 
 
+# Mapping country codes to country names
 countries = {
     "de": "Germany",
     "dk": "Denmark",
@@ -20,6 +19,22 @@ countries = {
     "se": "Sweden",
 }
 
+# Mapping country codes to language codes of corresponding language in Wikipedia
+languages = {
+    "de": "de",
+    "dk": "da",
+    "es": "ca",
+    "fi": "fi",
+    "fr": "fr",
+    "it": "it",
+    "jp": "ja",
+    "kr": "ko",
+    "nl": "nl",
+    "no": "no",
+    "rs": "sr",
+    "se": "sv",
+}
+
 
 def process_interventions_data(df):
     """Process data loaded from `interventions.csv`.
@@ -30,6 +45,22 @@ def process_interventions_data(df):
     Returns:
         Augmented interventions data.
     """
+
+    # Replace language codes with country codes
+    df = (
+        df.rename_axis("country")
+        .rename(
+            index={
+                "da": "dk",
+                "sr": "rs",
+                "sv": "se",
+                "ko": "kr",
+                "ca": "es",
+                "ja": "jp",
+            }
+        )
+        .sort_index()
+    )
 
     # Convert columns to datetime
     df = df.apply(pd.to_datetime)
@@ -130,60 +161,3 @@ def process_transport_data(df, countries=countries):
     df = df.set_index(["country", "transportation_type", "date"]).sort_index()
 
     return df
-
-
-def get_pageviews(df, lang, topic, measure="sum"):
-    """Combines the views from desktop and mobile Wikipedia pages for a given language and topic.
-
-    Args:
-        df: pageviews (dataframe).
-        lang: language code (string).
-        topic: page topic or "covid" (string).
-        measure: "sum" or "percent"
-
-    Returns:
-        Series of dates and topic pageviews.
-    """
-
-    # Select desktop and mobile pageviews
-    if topic == "covid":
-        df1 = df[lang]["covid"][measure]
-        df2 = df[lang + ".m"]["covid"][measure]
-    else:
-        df1 = df[lang]["topics"][topic][measure]
-        df2 = df[lang + ".m"]["topics"][topic][measure]
-
-    # defaultdict in case pageview count for a specific day only appears in one series
-    total_views = defaultdict(int, df1)
-
-    # Combine pageviews
-    if measure == "sum":
-        for date, views in df2.items():
-            total_views[date] += views
-
-    elif measure == "percent":
-        if topic == "covid":
-            df1_counts = defaultdict(float, df[lang]["covid"]["sum"])
-            df2_counts = defaultdict(float, df[lang + ".m"]["covid"]["sum"])
-        else:
-            df1_counts = defaultdict(float, df[lang]["topics"][topic]["sum"])
-            df2_counts = defaultdict(float, df[lang + ".m"]["topics"][topic]["sum"])
-
-        for date, views in df2.items():
-            total_views[date] = (
-                (total_views[date] * df1_counts[date] + views * df2_counts[date])
-                / (df1_counts[date] + df2_counts[date])
-                if df1_counts[date] + df2_counts[date] != 0
-                else 0
-            )
-
-    # Convert to dataframe
-    total_views = pd.DataFrame(total_views.items(), columns=["date", "pageviews"])
-
-    # Extract date
-    total_views["date"] = pd.to_datetime(total_views["date"]).dt.date
-
-    # Set index
-    total_views = total_views.set_index("date")
-
-    return total_views
