@@ -16,13 +16,13 @@ def get_polling_data(country):
         KeyError: data unavailable for given country
     """
 
-    eu_polls = ["de", "dk", "es", "fi", "fr", "it", "nl", "no", "se"]
+    available_data = ["de", "dk", "es", "fi", "fr", "it", "nl", "no", "se"]
 
-    if country not in eu_polls:
+    if country not in available_data:
         raise KeyError("Data unavailable for given country.")
 
     url = f"https://filipvanlaenen.github.io/eopaod/{country}.csv"
 
-    df = pd.read_csv(url)
+    df = pd.read_csv(url, on_bad_lines="skip")
 
     return df
