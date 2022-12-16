@@ -35,7 +35,12 @@ parties = {
         "Danmarksdemokraterne": "DD",
     },
     "es": {
-        # TODO
+        'Partido Popular': 'PP', 
+        'Partido Socialista Obrero Español': 'PSOE',
+        'Unidos Podemos': 'UP', 
+        'Ciudadanos–Partido de la Ciudadanía': 'Cs',
+        'Esquerra Republicana de Catalunya–Catalunya Sí': 'ERC',
+        'Vox': 'Vox',
     },
     "fi": {
         "Suomen Keskusta": "Kesk",
@@ -225,3 +230,33 @@ def get_polling_data(country):
     df = df.set_index("Date").sort_index()
 
     return df
+
+
+
+
+def calculate_mean(col, coeff):
+    """ Calculate the mean of a list according to a list of coefficient
+
+    Args:
+        col: list of values
+        coeff: list of coefficient
+
+    Return: weighted mean
+    """
+    return (col * coeff).sum() / coeff.sum()
+
+
+# Calculate the standard deviation with respect to the sample size
+def calculate_std(col, coeff):
+    """ Calculate the standard deviation of a column in 
+    
+    Args:
+        col: list of values
+        coeff: list of coefficient
+
+    Return: weighted standard deviation
+    """
+    return (
+        (coeff * (col - calculate_mean(col, coeff)) ** 2).sum()
+        / coeff.sum()
+    ) ** 0.5
