@@ -4,6 +4,7 @@ import seaborn as sns
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 
+from src.data_processing import countries
 from src.helpers import *
 
 
@@ -85,7 +86,7 @@ def plot_polling_data(df, country):
         )
         plt.plot(idxs, scores["avg_" + party], label=party)
 
-    plt.title("Popularity of parties in " + country + " over months")
+    plt.title("Party popularity in " + countries[country])
     plt.xlabel("Date")
     plt.xticks(idxs[::3], rotation=45)
     plt.ylabel("Percentage")
