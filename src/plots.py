@@ -53,7 +53,7 @@ def plot_polling_data(df, country):
 
     df_grouped = df.groupby("Date")
 
-    parties = df.columns[2:]
+    parties = df.columns[1:]
 
     # Create dataframe with average and standard deviation for each party
     avg = df_grouped.apply(
