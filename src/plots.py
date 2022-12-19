@@ -48,7 +48,7 @@ def plot_mobility_response(df, labels=None):
     plt.ylabel("Reduced mobility (days)")
 
 
-def plot_polling_data(df, country):
+def plot_polling_data(df, country, df_dates):
     """Plot polling data for a given country. The dataframe df is grouped by month and the mean and standard deviation of each party is plotted."""
 
     df_grouped = df.groupby("Date")
@@ -86,10 +86,12 @@ def plot_polling_data(df, country):
         )
         plt.plot(idxs, scores["avg_" + party], label=party)
 
-    plt.title("Party popularity in " + countries[country])
+    plt.title(f"Polling data for {countries[country]}")
     plt.xlabel("Date")
     plt.xticks(idxs[::3], rotation=45)
     plt.ylabel("Percentage")
     plt.legend()
+
+    plt.axvline(x=df_dates.loc[country, "1st death"].strftime("%Y-%m"), color="black")
 
     plt.show()
