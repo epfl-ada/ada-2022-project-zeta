@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from src.helpers import *
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
+
+from src.helpers import *
 
 
 def plot_silhouettes(X, k_min, k_max):
@@ -45,19 +46,19 @@ def plot_mobility_response(df, labels=None):
     plt.xlabel("Response time (days)")
     plt.ylabel("Reduced mobility (days)")
 
+
 def plot_polling_data(df, country):
-    """Plot polling data for a given 'country'. The dataframe 'df' is grouped by month and the mean and standard deviation of each party is plotted."""
+    """Plot polling data for a given country. The dataframe df is grouped by month and the mean and standard deviation of each party is plotted."""
 
     df_grouped = df.groupby("Date")
-    
+
     parties = df.columns[2:]
 
-    # create dataframe with average and standard deviation of each party
-
+    # Create dataframe with average and standard deviation for each party
     avg = df_grouped.apply(
         lambda x: pd.Series(
             {
-                'avg_' + party: calculate_mean(x[party], x["Sample Size"])
+                "avg_" + party: calculate_mean(x[party], x["Sample Size"])
                 for party in parties
             }
         )
@@ -65,18 +66,16 @@ def plot_polling_data(df, country):
     std = df_grouped.apply(
         lambda x: pd.Series(
             {
-                'std_' + party: calculate_std(x[party], x["Sample Size"])
+                "std_" + party: calculate_std(x[party], x["Sample Size"])
                 for party in parties
             }
         )
     )
 
-    
-
-    scores = pd.concat([avg, std], axis = 1)
+    scores = pd.concat([avg, std], axis=1)
     idxs = scores.index.map(lambda x: x.strftime("%Y-%m"))
 
-    # plot the data
+    # Plot data
     for party in parties:
         plt.fill_between(
             idxs,
@@ -85,21 +84,11 @@ def plot_polling_data(df, country):
             alpha=0.2,
         )
         plt.plot(idxs, scores["avg_" + party], label=party)
-    plt.title('Popularity of parties in ' + country + ' over months')
+
+    plt.title("Popularity of parties in " + country + " over months")
     plt.xlabel("Date")
     plt.xticks(idxs[::3], rotation=45)
     plt.ylabel("Percentage")
     plt.legend()
 
     plt.show()
-
-
-
-
-
-
-
-
-
-
-
