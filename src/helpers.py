@@ -123,6 +123,12 @@ parties = {
 }
 
 
+def flatten(list):
+    """Flatten a list of lists."""
+
+    return [item for sublist in list for item in sublist]
+
+
 def get_pageviews(df, lang, topic, measure="sum"):
     """Combines the views from desktop and mobile Wikipedia pages for a given language and topic.
 
