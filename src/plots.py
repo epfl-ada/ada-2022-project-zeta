@@ -105,7 +105,7 @@ def plot_polling_data(df, country, df_dates):
         label="1st death",
     )
 
-    plt.legend(loc="lower right")
+    plt.legend(loc="lower left")
     plt.show()
 
 
@@ -121,13 +121,13 @@ def plot_pageviews(df, country, topic, df_dates):
     plt.plot(df.rolling(14).mean(), label="_nolegend_")
 
     if topic == POLITICS:
-        plt.title(f"Daily pageviews for politics in {countries[country]}")
+        plt.title(f"Daily Pageviews for Politics in {countries[country]}")
     elif topic == N_EUROPE:
-        plt.title(f"Daily pageviews for Northern Europe in {countries[country]}")
+        plt.title(f"Daily Pageviews for Northern Europe in {countries[country]}")
     elif topic == W_EUROPE:
-        plt.title(f"Daily pageviews for Western Europe in {countries[country]}")
+        plt.title(f"Daily Pageviews for Western Europe in {countries[country]}")
     elif topic == S_EUROPE:
-        plt.title(f"Daily pageviews for Southern Europe in {countries[country]}")
+        plt.title(f"Daily Pageviews for Southern Europe in {countries[country]}")
 
     plt.xlabel("Date")
     plt.xticks(rotation=45)
