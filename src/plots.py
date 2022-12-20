@@ -32,7 +32,7 @@ def plot_silhouettes(X, k_min, k_max):
 
     # Plot the data
     plt.plot(silhouettes.k, silhouettes.score)
-    plt.title("Silhouette Score for each value of K")
+    plt.title("Silhouette Score for Each Value of K")
     plt.xlabel("K")
     plt.ylabel("Silhouette score")
 
@@ -50,7 +50,7 @@ def plot_mobility_response(df, labels=None):
     for idx, row in df.iterrows():
         ax.text(row["Response time"] + 0.5, row["Reduced mobility"], idx)
 
-    plt.title("Reduced mobility vs. Response time")
+    plt.title("Reduced Mobility vs. Response Time")
     plt.xlabel("Response time (days)")
     plt.ylabel("Reduced mobility (days)")
 
@@ -93,35 +93,19 @@ def plot_polling_data(df, country, df_dates):
         )
         plt.plot(idxs, scores["avg_" + party], label=party)
 
-    plt.title(f"Polling data for {countries[country]} (--- denoting first death)")
+    plt.title(f"Polling Data for {countries[country]}")
     plt.xlabel("Date")
     plt.xticks(idxs[::3], rotation=45)
     plt.ylabel("Percentage")
-    
 
     plt.axvline(
         x=df_dates.loc[country, "1st death"].strftime("%Y-%m"),
         color="black",
         linestyle="--",
-        label='1st death'
+        label="1st death",
     )
 
-    plt.axvline(
-        x=df_dates.loc[country, "Mobility"].strftime("%Y-%m"),
-        color="black",
-        linestyle="--",
-        label='1st death'
-    )
-    
-    if country != 'es':
-        plt.axvline(
-            x=df_dates.loc[country, "Normalcy"].strftime("%Y-%m"),
-            color="black",
-            linestyle="--",
-            label='1st death'
-            )
-
-    plt.legend(loc="lower left")
+    plt.legend(loc="lower right")
     plt.show()
 
 
