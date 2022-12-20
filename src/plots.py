@@ -99,7 +99,11 @@ def plot_polling_data(df, country, df_dates):
     plt.ylabel("Percentage")
     plt.legend()
 
-    plt.axvline(x=df_dates.loc[country, "1st death"].strftime("%Y-%m"), color="black")
+    plt.axvline(
+        x=df_dates.loc[country, "1st death"].strftime("%Y-%m"),
+        color="black",
+        linestyle="--",
+    )
 
     plt.show()
 
@@ -107,16 +111,22 @@ def plot_polling_data(df, country, df_dates):
 def plot_pageviews(df, country, topic, df_dates):
     """Plot pageviews data for a given country and topic."""
 
-    # Select entries in 2020
+    # Select last available year of data
     df = df.loc[
         pd.date_range(pd.to_datetime("2019-08-01"), pd.to_datetime("2020-07-31"))
     ]
 
-    # Rolling average across 7 days
-    plt.plot(df.rolling(7).mean(), label="_nolegend_")
+    # Rolling average across 14 days
+    plt.plot(df.rolling(14).mean(), label="_nolegend_")
 
-    if topic == "History and Society.Politics and government":
-        plt.title(f"Pageviews for politics in {countries[country]}")
+    if topic == POLITICS:
+        plt.title(f"Daily pageviews for politics in {countries[country]}")
+    elif topic == N_EUROPE:
+        plt.title(f"Daily pageviews for Northern Europe in {countries[country]}")
+    elif topic == W_EUROPE:
+        plt.title(f"Daily pageviews for Western Europe in {countries[country]}")
+    elif topic == S_EUROPE:
+        plt.title(f"Daily pageviews for Southern Europe in {countries[country]}")
 
     plt.xlabel("Date")
     plt.xticks(rotation=45)
@@ -126,11 +136,13 @@ def plot_pageviews(df, country, topic, df_dates):
     plt.axvline(
         x=pd.to_datetime(df_dates.loc[country, "Mobility"].strftime("%Y-%m-%d")),
         color="red",
+        linestyle="--",
     )
     if country != "es":
         plt.axvline(
             x=pd.to_datetime(df_dates.loc[country, "Normalcy"].strftime("%Y-%m-%d")),
             color="green",
+            linestyle="--",
         )
 
     plt.legend(["Abnormal mobility", "Normal mobility"], loc="upper left")
