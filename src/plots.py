@@ -97,14 +97,31 @@ def plot_polling_data(df, country, df_dates):
     plt.xlabel("Date")
     plt.xticks(idxs[::3], rotation=45)
     plt.ylabel("Percentage")
-    plt.legend(loc="lower left")
+    
 
     plt.axvline(
         x=df_dates.loc[country, "1st death"].strftime("%Y-%m"),
         color="black",
         linestyle="--",
+        label='1st death'
     )
 
+    plt.axvline(
+        x=df_dates.loc[country, "Mobility"].strftime("%Y-%m"),
+        color="black",
+        linestyle="--",
+        label='1st death'
+    )
+    
+    if country != 'es':
+        plt.axvline(
+            x=df_dates.loc[country, "Normalcy"].strftime("%Y-%m"),
+            color="black",
+            linestyle="--",
+            label='1st death'
+            )
+
+    plt.legend(loc="lower left")
     plt.show()
 
 
