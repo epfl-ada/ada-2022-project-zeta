@@ -8,6 +8,13 @@ from src.data_processing import countries
 from src.helpers import *
 
 
+POLITICS = "History and Society.Politics and government"
+
+N_EUROPE = "Geography.Regions.Europe.Northern Europe"
+W_EUROPE = "Geography.Regions.Europe.Western Europe"
+S_EUROPE = "Geography.Regions.Europe.Southern Europe"
+
+
 def plot_silhouettes(X, k_min, k_max):
     """Plot Silhouette Scores for a range of clusters between `k_min` and `k_max` inclusive."""
 
@@ -49,7 +56,7 @@ def plot_mobility_response(df, labels=None):
 
 
 def plot_polling_data(df, country, df_dates):
-    """Plot polling data for a given country. The dataframe df is grouped by month and the mean and standard deviation of each party is plotted."""
+    """Plot polling data for a given country. The dataframe `df` is grouped by month, and the mean and standard deviation of each party is plotted."""
 
     df_grouped = df.groupby("Date")
 
@@ -93,5 +100,39 @@ def plot_polling_data(df, country, df_dates):
     plt.legend()
 
     plt.axvline(x=df_dates.loc[country, "1st death"].strftime("%Y-%m"), color="black")
+
+    plt.show()
+
+
+def plot_pageviews(df, country, topic, df_dates):
+    """Plot pageviews data for a given country and topic."""
+
+    # Select entries in 2020
+    df = df.loc[
+        pd.date_range(pd.to_datetime("2019-08-01"), pd.to_datetime("2020-07-31"))
+    ]
+
+    # Rolling average across 7 days
+    plt.plot(df.rolling(7).mean(), label="_nolegend_")
+
+    if topic == "History and Society.Politics and government":
+        plt.title(f"Pageviews for politics in {countries[country]}")
+
+    plt.xlabel("Date")
+    plt.xticks(rotation=45)
+    plt.ylabel("Pageviews")
+    plt.tight_layout()
+
+    plt.axvline(
+        x=pd.to_datetime(df_dates.loc[country, "Mobility"].strftime("%Y-%m-%d")),
+        color="red",
+    )
+    if country != "es":
+        plt.axvline(
+            x=pd.to_datetime(df_dates.loc[country, "Normalcy"].strftime("%Y-%m-%d")),
+            color="green",
+        )
+
+    plt.legend(["Abnormal mobility", "Normal mobility"], loc="upper left")
 
     plt.show()
