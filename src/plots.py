@@ -93,7 +93,7 @@ def plot_polling_data(df, country, df_dates):
         )
         plt.plot(idxs, scores["avg_" + party], label=party)
 
-    plt.title(f"Polling data for {countries[country]}")
+    plt.title(f"Polling data for {countries[country]} (--- denoting first death)")
     plt.xlabel("Date")
     plt.xticks(idxs[::3], rotation=45)
     plt.ylabel("Percentage")

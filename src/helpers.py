@@ -3,6 +3,7 @@
 from collections import defaultdict
 
 import pandas as pd
+from scipy import stats
 
 
 # Political parties per country
@@ -122,6 +123,19 @@ parties = {
     },
 }
 
+# Main ruling party at the start of the pandemic per country
+main_party = {
+    "de": "CDU/CSU *",
+    "dk": "SD *",
+    "es": "PSOE *",
+    "fi": "SDP *",
+    "fr": "LREM *",
+    "it": "M5S (NI) *",
+    "nl": "VVD *",
+    "no": "Høyre *",
+    "se": "SSAP *",
+}
+
 
 def flatten(list):
     """Flatten a list of lists."""
@@ -186,7 +200,7 @@ def get_pageviews(df, lang, topic, measure="sum"):
     return total_views
 
 
-def get_polling_data(country):
+def get_polling_data(country, monthly=True):
     """Get polling data for a given country.
 
     Args:
@@ -213,7 +227,10 @@ def get_polling_data(country):
     df = pd.read_csv(url, on_bad_lines="skip")
 
     # Assign poll date at end of fieldwork
-    df["Date"] = pd.to_datetime(df["Fieldwork End"]).dt.to_period("M")
+    df["Date"] = pd.to_datetime(df["Fieldwork End"])
+    # Ignore day of month
+    if monthly:
+        df["Date"] = df["Date"].dt.to_period("M")
 
     # Keep polls starting from 2019
     df = df[df["Date"] >= "2019-01"]
@@ -264,3 +281,35 @@ def calculate_std(col, coeff):
     return (
         (coeff * (col - calculate_mean(col, coeff)) ** 2).sum() / coeff.sum()
     ) ** 0.5
+
+
+def polling_data_ttest(country, df_dates):
+    """Perform a t-test determining whether or not there is a statistically significant
+    difference in polling immediately before and after the start of the pandemic.
+    
+    Args:
+        country: country code
+        df_dates: `interventions.csv`
+    
+    Returns: p-value from independent t-test sampling
+    """
+
+    # Get polls for country
+    df = get_polling_data(country, monthly=False)[main_party[country]]
+
+    # Get date of first death
+    cutoff_date = pd.to_datetime(
+        df_dates.loc[country, "1st death"].strftime("%Y-%m-%d")
+    )
+
+    # Polls 2 months before pandemic
+    pre_covid_polls = df[
+        (cutoff_date - pd.Timedelta(weeks=8) < df.index) & (df.index <= cutoff_date)
+    ]
+    # Polls 2 months into pandemic
+    post_covid_polls = df[
+        (cutoff_date < df.index) & (df.index <= cutoff_date + pd.Timedelta(weeks=8))
+    ]
+
+    # Calculate t-test
+    return stats.ttest_ind(pre_covid_polls, post_covid_polls).pvalue
