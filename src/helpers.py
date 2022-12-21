@@ -232,8 +232,8 @@ def get_polling_data(country, monthly=True):
     if monthly:
         df["Date"] = df["Date"].dt.to_period("M")
 
-    # Keep polls starting from 2019
-    df = df[df["Date"] >= "2019-01"]
+    # Keep polls between 2019 and April 2021
+    df = df[("2019-01" <= df["Date"]) & (df["Date"] <= "2021-04")]
 
     # Keep relevant columns
     df = df[["Date", "Sample Size"] + list(parties[country].keys())]
