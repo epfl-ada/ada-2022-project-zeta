@@ -4,7 +4,7 @@ import seaborn as sns
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 
-from src.data_processing import countries
+from src.data_processing import countries, languages
 from src.helpers import *
 
 
@@ -149,3 +149,61 @@ def plot_pageviews(df, country, topic, df_dates):
     plt.legend(["Abnormal mobility", "Normal mobility"], loc="upper left")
 
     plt.show()
+
+
+def plot_pageviews2(df_pageviews, country, df_dates):
+    """Plot pageviews data for COVID and politics related pages for a given country."""
+
+    # Get data
+    df_covid = get_pageviews(df_pageviews, languages[country], "covid")
+    df_politics = get_pageviews(df_pageviews, languages[country], POLITICS)
+
+    # Select last available year of data
+    df_covid = df_covid.loc[
+        pd.date_range(pd.to_datetime("2019-08-01"), pd.to_datetime("2020-07-31"))
+    ]
+    df_politics = df_politics.loc[
+        pd.date_range(pd.to_datetime("2019-08-01"), pd.to_datetime("2020-07-31"))
+    ]
+
+    # Plot subplots
+    fig, (ax1, ax2) = plt.subplots(2, sharex=True)
+    ax1.plot(df_covid.rolling(14).mean(), label="_nolabel_")
+    ax2.plot(df_politics.rolling(14).mean(), label="_nolabel_")
+
+    fig.suptitle(f"Daily Pageviews in {countries[country]}")
+    ax1.set_title("COVID")
+    ax2.set_title("Politics")
+    ax1.set_ylabel("Pageviews")
+    ax2.set_xlabel("Date")
+
+    for ax in [ax1, ax2]:
+        ax.axvline(
+            x=pd.to_datetime(df_dates.loc[country, "1st case"].strftime("%Y-%m-%d")),
+            color="black",
+            linestyle="--",
+            label="1st case",
+        )
+        ax.axvline(
+            x=pd.to_datetime(df_dates.loc[country, "Mobility"].strftime("%Y-%m-%d")),
+            color="red",
+            linestyle="--",
+            label="Abnormal mobility",
+        )
+        if country != "es":
+            ax.axvline(
+                x=pd.to_datetime(
+                    df_dates.loc[country, "Normalcy"].strftime("%Y-%m-%d")
+                ),
+                color="green",
+                linestyle="--",
+                label="Normal mobility",
+            )
+
+    # Create single legend
+    lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
+    lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
+    num_lines = 2 if country == "es" else 3
+    fig.legend(lines[:num_lines], labels[:num_lines])
+
+    fig.show()
