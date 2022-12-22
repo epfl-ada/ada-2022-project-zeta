@@ -170,6 +170,7 @@ def plot_pageviews2(df_pageviews, country, df_dates):
     fig, (ax1, ax2) = plt.subplots(2, sharex=True)
     ax1.plot(df_covid.rolling(14).mean(), label="_nolabel_")
     ax2.plot(df_politics.rolling(14).mean(), label="_nolabel_")
+    ax1.set_yscale("log")
 
     fig.suptitle(f"Daily Pageviews in {countries[country]}")
     ax1.set_title("COVID")
@@ -183,6 +184,12 @@ def plot_pageviews2(df_pageviews, country, df_dates):
             color="black",
             linestyle="--",
             label="1st case",
+        )
+        ax.axvline(
+            x=pd.to_datetime(df_dates.loc[country, "1st death"].strftime("%Y-%m-%d")),
+            color="yellow",
+            linestyle="--",
+            label="1st death",
         )
         ax.axvline(
             x=pd.to_datetime(df_dates.loc[country, "Mobility"].strftime("%Y-%m-%d")),
@@ -203,7 +210,7 @@ def plot_pageviews2(df_pageviews, country, df_dates):
     # Create single legend
     lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
     lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
-    num_lines = 2 if country == "es" else 3
+    num_lines = 3 if country == "es" else 4
     fig.legend(lines[:num_lines], labels[:num_lines])
 
     fig.show()
