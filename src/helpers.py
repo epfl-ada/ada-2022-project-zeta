@@ -14,34 +14,20 @@ parties = {
         "SPD": "SPD",
         "Union": "CDU/CSU *",
         "Alternative für Deutschland": "AfD",
-        # "DIE LINKE": "DIE LINKE",
         "BÜNDNIS 90/DIE GRÜNEN": "GRÜNE",
     },
     "dk": {
         "Socialdemokraterne": "SD *",
-        # "Dansk Folkeparti": "DF",
         "Venstre": "Venstre",
-        # "Enhedslisten–De Rød-Grønne": "EDRG",
         "Liberal Alliance": "LA",
-        # "Alternativet": "Alternativet",
-        # "Radikale Venstre": "RV",
         "Socialistisk Folkeparti": "SF",
         "Det Konservative Folkeparti": "Konservative",
-        # "Kristendemokraterne": "Kristendemokraterne",
-        # "Nye Borgerlige": "NB",
-        # "Borgerlisten": "Borgerlisten",
-        # "Stram Kurs": "SK",
-        # "Veganerlisten": "Veganerlisten",
-        # "Moderaterne": "Moderaterne",
-        # "Frie Grønne": "FG",
-        # "Danmarksdemokraterne": "DD",
     },
     "es": {
         "Partido Popular": "PP",
         "Partido Socialista Obrero Español": "PSOE *",
         "Unidos Podemos": "UP",
         "Ciudadanos–Partido de la Ciudadanía": "Cs",
-        # "Esquerra Republicana de Catalunya–Catalunya Sí": "ERC",
         "Vox": "Vox",
     },
     "fi": {
@@ -50,36 +36,16 @@ parties = {
         "Perussuomalaiset": "PS",
         "Suomen Sosialidemokraattinen Puolue": "SDP *",
         "Vihreä liitto": "Vihr",
-        # "Vasemmistoliitto": "Vas",
-        # "Svenska folkpartiet i Finland": "SFP",
-        # "Kristillisdemokraatit": "KD",
-        # "Sininen tulevaisuus": "Sin",
-        # "Liike Nyt": "Liik",
     },
     "fr": {
-        # "Lutte Ouvrière": "LO",
-        # "Nouveau Parti anticapitaliste": "NPA",
-        # "Parti communiste français": "PCF",
         "La France insoumise": "LFI",
-        # "Génération·s, le mouvement": "GÉNÉRATION·S",
-        # "Europe Écologie Les Verts": "EÉLV",
         "Parti socialiste": "PS",
         "La République en marche–Mouvement démocrate": "LREM *",
-        # "Agir, la droite constructive–Union des démocrates et indépendants": "AGIR",
-        # "Résistons!": "RÉSISTONS!",
         "Les Républicains": "LR",
-        # "Debout la France": "DLF",
         "Rassemblement national": "RN",
-        # "Les Patriotes": "PATRIOTES",
-        # "Union populaire républicaine": "UPR",
-        # "Mouvement des gilets jaunes": "GILETS JAUNES",
-        # "L’Engagement": "ENGAGEMENT",
-        # "Reconquête": "RECONQUÊTE",
-        # "Walwari": "WALWARI",
     },
     "it": {
         "Partito Democratico": "PD (S&D)",
-        # "Più Europa": "+E (RE)",
         "Movimento 5 Stelle": "M5S (NI) *",
         "Forza Italia": "FI (EPP)",
         "Lega Nord": "LEGA (ID)",
@@ -90,25 +56,12 @@ parties = {
         "Partij voor de Vrijheid": "PVV",
         "Christen-Democratisch Appèl": "CDA",
         "Democraten 66": "D66",
-        # "GroenLinks": "GL",
-        # "Socialistische Partij": "SP",
         "Partij van de Arbeid": "PvdA",
-        # "ChristenUnie": "CU",
-        # "Partij voor de Dieren": "PvdD",
-        # "Staatkundig Gereformeerde Partij": "SGP",
-        # "Forum voor Democratie": "FvD",
-        # "Juiste Antwoord 2021": "JA21",
-        # "Volt Europa": "Volt",
-        # "BoerBurgerBeweging": "BBB",
     },
     "no": {
-        # "Rødt": "Rødt",
         "Sosialistisk Venstreparti": "SV",
-        # "Miljøpartiet De Grønne": "MDG",
         "Arbeiderpartiet": "AP",
         "Senterpartiet": "SP",
-        # "Venstre": "Venstre",
-        # "Kristelig Folkeparti": "KRF",
         "Høyre": "Høyre *",
         "Fremskrittspartiet": "FrP",
     },
@@ -118,9 +71,6 @@ parties = {
         "Sverigedemokraterna": "SD",
         "Centerpartiet": "CP",
         "Vänsterpartiet": "VP",
-        # "Kristdemokraterna": "KD",
-        # "Liberalerna": "Liberalerna",
-        # "Miljöpartiet de gröna": "MP",
     },
 }
 
@@ -137,11 +87,151 @@ main_party = {
     "se": "SSAP *",
 }
 
+# Political alignment of each party
+political_alignment = {
+    "de": {
+        "FDP": "centre-right",
+        "SPD": "centre-left",
+        "CDU/CSU *": "centre-right",
+        "AfD": "right",
+        "GRÜNE": "centre-left",
+    },
+    "dk": {
+        "SD *": "centre-left",
+        "Venstre": "centre-right",
+        "LA": "centre-right",
+        "SF": "left",
+        "Konservative": "centre-right",
+    },
+    "es": {
+        "PP": "centre-right",
+        "PSOE *": "centre-left",
+        "UP": "left",
+        "Cs": "centre",
+        "Vox": "right",
+    },
+    "fi": {
+        "Kesk": "centre",
+        "Kok": "centre-right",
+        "PS": "right",
+        "SDP *": "centre-left",
+        "Vihr": "centre-left",
+    },
+    "fr": {
+        "LFI": "left",
+        "PS": "centre-left",
+        "LREM *": "centre",
+        "LR": "centre-right",
+        "RN": "right",
+    },
+    "it": {
+        "PD (S&D)": "centre-left",
+        "M5S (NI) *": "right",
+        "FI (EPP)": "centre-right",
+        "LEGA (ID)": "right",
+        "FdI (ECR)": "right",
+    },
+    "nl": {
+        "VVD *": "centre-right",
+        "PVV": "right",
+        "CDA": "centre-right",
+        "D66": "centre",
+        "PvdA": "centre-left",
+    },
+    "no": {
+        "SV": "left",
+        "AP": "centre-left",
+        "SP": "centre-left",
+        "Høyre *": "centre-right",
+        "FrP": "right",
+    },
+    "se": {
+        "SSAP *": "centre-left",
+        "MSP": "centre-right",
+        "SD": "right",
+        "CP": "centre",
+        "VP": "left",
+    },
+}
+
+# Same as above except change all centre-left to left and centre-right to right
+political_alignment_2 = {
+    "de": {
+        "FDP": "right",
+        "SPD": "left",
+        "CDU/CSU *": "right",
+        "AfD": "right",
+        "GRÜNE": "left",
+    },
+    "dk": {
+        "SD *": "left",
+        "Venstre": "right",
+        "LA": "right",
+        "SF": "left",
+        "Konservative": "right",
+    },
+    "es": {
+        "PP": "right",
+        "PSOE *": "left",
+        "UP": "left",
+        "Cs": "centre",
+        "Vox": "right",
+    },
+    "fi": {
+        "Kesk": "centre",
+        "Kok": "right",
+        "PS": "right",
+        "SDP *": "left",
+        "Vihr": "left",
+    },
+    "fr": {
+        "LFI": "left",
+        "PS": "left",
+        "LREM *": "centre",
+        "LR": "right",
+        "RN": "right",
+    },
+    "it": {
+        "PD (S&D)": "left",
+        "M5S (NI) *": "right",
+        "FI (EPP)": "right",
+        "LEGA (ID)": "right",
+        "FdI (ECR)": "right",
+    },
+    "nl": {
+        "VVD *": "right",
+        "PVV": "right",
+        "CDA": "right",
+        "D66": "centre",
+        "PvdA": "left",
+    },
+    "no": {
+        "SV": "left",
+        "AP": "left",
+        "SP": "left",
+        "Høyre *": "right",
+        "FrP": "right",
+    },
+    "se": {
+        "SSAP *": "left",
+        "MSP": "right",
+        "SD": "right",
+        "CP": "centre",
+        "VP": "left",
+    },
+}
+
 
 def flatten(list):
     """Flatten a list of lists."""
 
     return [item for sublist in list for item in sublist]
+
+
+def get_dates(df_dates, country):
+    """Get first case, first death and lockdown dates for a given country."""
+
+    return pd.to_datetime(df_dates.loc[country][["1st case", "1st death", "Lockdown"]])
 
 
 def get_pageviews(df, lang, topic, measure="sum"):

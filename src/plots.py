@@ -37,6 +37,18 @@ def plot_silhouettes(X, k_min, k_max):
     plt.ylabel("Silhouette score")
 
 
+def plot_dates(dates):
+    """Plot dates of first case, first death and lockdown."""
+
+    first_case, first_death, lockdown = dates.values
+    plt.axvline(x=first_case, color="green", linestyle="--")
+    plt.axvline(x=first_death, color="red", linestyle="--")
+
+    # Some countries do not have lockdown dates
+    if lockdown is not pd.NaT:
+        plt.axvline(x=lockdown, color="black", linestyle="--")
+
+
 def plot_mobility_response(df, labels=None):
     """Plot response time and duration of reduced mobility period of countries. Optionally group the countries by `labels`."""
 
@@ -197,3 +209,217 @@ def plot_pageviews2(df_pageviews, country, df_dates):
     fig.legend(lines[:num_lines], labels[:num_lines])
 
     fig.show()
+
+
+def plot_driving_walking_mobility(df, df_dates, country):
+    """Plot mobility data for a given country. The data is split into driving and walking data and is plotted together."""
+
+    df_drive = df.loc[country, "driving"]
+    df_walk = df.loc[country, "walking"]
+    df_transport = pd.concat([df_drive, df_walk], axis=1)
+
+    # Convert indices to datetime
+    df_transport.index = pd.to_datetime(df_transport.index)
+
+    # Keep only rows where date is between 2020-01-01 and < 2020-04-30
+    df_transport = df_transport.loc[
+        pd.to_datetime("2020-01-01") : pd.to_datetime("2020-04-30")
+    ]
+
+    # Create figure
+    plt.figure(figsize=(7, 4), dpi=100)
+    plt.plot(df_transport)
+
+    plt.ylim(-100, 100)
+
+    legends = ["Driving", "Walking", "First case", "First death"]
+
+    dates = get_dates(df_dates, country)
+    plot_dates(dates)
+
+    if dates["Lockdown"] is not pd.NaT:
+        legends.append("Lockdown")
+
+    plt.title("Percentage of mobility change in {}".format(country))
+    plt.xlabel("Date")
+    plt.legend(legends)
+    plt.xticks(rotation=45)
+    plt.show()
+
+
+def plot_google_mobility(df_mobility, df_dates, columns_dict, title, country):
+    """Plot Google mobility data for a given country. The title arguement gives the column we want to plot."""
+
+    ti = columns_dict[title]
+    df = df_mobility.loc[country][ti]
+    plt.plot(df)
+
+    plt.ylim(-100, 100)
+
+    legends = ["Pageviews", "First case", "First death"]
+
+    dates = get_dates(df_dates, country)
+    plot_dates(dates)
+
+    if dates["Lockdown"] is not pd.NaT:
+        legends.append("Lockdown")
+
+    plt.title(f"{title} for {country}")
+    plt.xlabel("Date")
+    plt.ylabel(f"{ti}")
+    plt.legend(legends)
+    plt.xticks(rotation=45)
+
+    plt.show()
+
+
+def plot_country_alignment(df, country, df_dates):
+    # Map each party to its political alignment
+    df.columns = ["Sample Size"] + list(political_alignment[country].values())
+
+    # Sum columns that belong to the same alignment
+    df = df.groupby(df.columns, axis=1).sum()
+
+    alignments = df.columns[1:]
+    # Group the dataframe by month to obtain weighted mean and standard deviation of each alignment
+    scores = group_date(df, alignments)
+
+    # Perform linear interpolation if there are months with no data
+    scores = linear_interpolation(scores, alignments)
+
+    idxs = scores.index.map(lambda x: x.strftime("%Y-%m"))
+
+    # Plot data
+    for alignment in alignments:
+        plt.fill_between(
+            idxs,
+            scores["avg_" + alignment] - scores["std_" + alignment],
+            scores["avg_" + alignment] + scores["std_" + alignment],
+            alpha=0.2,
+        )
+        plt.plot(idxs, scores["avg_" + alignment], label=alignment)
+
+    plt.title(f"Political alignment popularity for {countries[country]}")
+    plt.xlabel("Date")
+    plt.xticks(idxs[::3], rotation=45)
+    plt.ylabel("Percentage")
+
+    plt.axvline(
+        x=df_dates.loc[country, "1st death"].strftime("%Y-%m"),
+        color="black",
+        linestyle="--",
+        label="1st death",
+    )
+
+    plt.legend(loc="lower left")
+    plt.show()
+
+
+def plot_countries_alignment(dfs, countries, number_countries):
+
+    # add columns of parties of dfs[1] and dfs[2] to dfs[0]
+    true_dfs = dfs[0].join(dfs[1].iloc[:, 1:])
+    true_dfs = true_dfs.join(dfs[2].iloc[:, 1:])
+
+    true_dfs.columns = (
+        ["Sample Size"]
+        + list(political_alignment[countries[0]].values())
+        + list(political_alignment[countries[1]].values())
+        + list(political_alignment[countries[2]].values())
+    )
+    alignments = []
+
+    for i in range(number_countries):
+        # Get alignments that appear at least once in the data
+        for alignment in dfs[i].columns[1:]:
+            if alignment not in alignments:
+                alignments.append(alignment)
+
+    scores = group_date(true_dfs, alignments)
+    scores = linear_interpolation(scores, alignments)
+
+    idxs = scores.index.map(lambda x: x.strftime("%Y-%m"))
+
+    for alignment in alignments:
+        plt.fill_between(
+            idxs,
+            scores["avg_" + alignment] - scores["std_" + alignment],
+            scores["avg_" + alignment] + scores["std_" + alignment],
+            alpha=0.2,
+        )
+        plt.plot(idxs, scores["avg_" + alignment], label=alignment)
+
+    plt.title(f"Political alignment popularity for {countries}")
+    plt.xlabel("Date")
+    plt.xticks(idxs[::3], rotation=45)
+    plt.ylabel("Percentage")
+
+    plt.legend(loc="lower left")
+    plt.show()
+
+
+def plot_mobility_pageviews_covid(df_transport1, df_pageviews, country, df_dates):
+    """Plot mobility data for a given country. The data is split into driving and walking data and plotted together."""
+
+    df_drive = df_transport1.loc[country, "driving"]
+    df_walk = df_transport1.loc[country, "walking"]
+    df_transport = pd.concat([df_drive, df_walk], axis=1)
+
+    # Convert indices to datetime
+    df_transport.index = pd.to_datetime(df_transport.index)
+
+    # Keep only rows where date is between 2020-01-01 and 2020-04-30
+    df_transport = df_transport.loc[
+        pd.to_datetime("2020-01-01") : pd.to_datetime("2020-04-20")
+    ]
+
+    # Select last available year of data
+    df_clipped = df_pageviews.loc[
+        pd.date_range(pd.to_datetime("2020-01-01"), pd.to_datetime("2020-04-20"))
+    ]
+
+    legends = ["Driving", "Walking", "First case", "First death"]
+    legends2 = ["First case", "First death"]
+    ticks_x = [
+        pd.to_datetime("2020-01-15"),
+        pd.to_datetime("2020-02-01"),
+        pd.to_datetime("2020-02-15"),
+        pd.to_datetime("2020-03-01"),
+        pd.to_datetime("2020-03-15"),
+        pd.to_datetime("2020-04-01"),
+        pd.to_datetime("2020-04-15"),
+    ]
+
+    plt.figure(1, figsize=(5, 7))
+    plt.subplot(2, 1, 1)
+    plt.plot(df_transport)
+    plt.ylim(-100, 50)
+    plt.ylabel("Percentage change [%]")
+    plt.xlim(pd.to_datetime("2020-01-15"), pd.to_datetime("2020-04-20"))
+    dates = get_dates(df_dates, country)
+    plot_dates(dates)
+    if dates["Lockdown"] is not pd.NaT:
+        legends.append("Lockdown")
+    plt.title("Percentage of mobility change in {}".format(country))
+    plt.legend(legends)
+    plt.xticks(ticks=ticks_x, labels=[], rotation=45)
+
+    plt.subplot(2, 1, 2)
+    # Rolling average across 14 days
+    plt.plot(
+        df_clipped.index,
+        df_clipped.rolling(14).mean(),
+        color="black",
+        label="_nolegend_",
+    )
+    plt.title(f"Daily pageviews for covid related pages {countries[country]}")
+    plt.xlabel("Date")
+    plt.xticks(ticks=ticks_x, rotation=45)
+    plt.ylabel("Pageviews")
+    plt.tight_layout()
+    plt.xlim(pd.to_datetime("2020-01-15"), pd.to_datetime("2020-04-20"))
+    dates = get_dates(df_dates, country)
+    plot_dates(dates)
+    plt.legend(legends2, loc="upper left")
+
+    plt.show()
