@@ -154,6 +154,85 @@ political_alignment = {
     },
 
 }
+
+
+# create same new dictionary and change all centre-left to left and centre-right to right
+
+political_alignment_2 = {
+    'de': {
+        'FDP': 'right',
+        'SPD': 'left',
+        'CDU/CSU *': 'right',
+        'AfD': 'right',
+        'GRÜNE': 'left'
+    },
+
+    'dk': {
+        'SD *': 'left',
+        'Venstre': 'right',
+        'LA': 'right',
+        'SF': 'left',
+        'Konservative': 'right',
+        
+    },
+
+    'es': {
+        'PP': 'right',
+        'PSOE *': 'left',
+        'UP': 'left',
+        'Cs': 'centre',
+        'Vox': 'right',
+    },
+    
+    'fi': {
+        'Kesk': 'centre',
+        'Kok': 'right',
+        'PS': 'right',
+        'SDP *': 'left',
+        'Vihr': 'left',
+    },
+
+    'fr': {
+        'LFI': 'left',
+        'PS': 'left',
+        'LREM *': 'centre',
+        'LR': 'right',
+        'RN': 'right',
+    },
+
+    'it': {
+        'PD (S&D)': 'left',
+        'M5S (NI) *': 'right',
+        'FI (EPP)': 'right',
+        'LEGA (ID)': 'right',
+        'FdI (ECR)': 'right',
+    },
+
+    'nl': {
+        'VVD *': 'right',
+        'PVV': 'right',
+        'CDA': 'right',
+        'D66': 'centre',
+        'PvdA': 'left',
+    },
+
+    'no': {
+        'SV': 'left',
+        'AP': 'left',
+        'SP': 'left',
+        'Høyre *': 'right',
+        'FrP': 'right',
+    },
+
+    'se': {
+        'SSAP *': 'left',
+        'MSP': 'right',
+        'SD': 'right',
+        'CP': 'centre',
+        'VP': 'left',
+
+    }
+}
 # Main ruling party at the start of the pandemic per country
 main_party = {
     "de": "CDU/CSU *",
