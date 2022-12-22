@@ -175,7 +175,7 @@ def plot_polling_data(df, country, df_dates):
 def plot_country_alignment(df, country, df_dates):
 
     # map each party to its political alignment
-    df.columns = ["Sample Size"] + list(political_alignment_2[country].values())
+    df.columns = ["Sample Size"] + list(political_alignment[country].values())
 
     # sum columns that belong to the same alignment
     df = df.groupby(df.columns, axis = 1).sum()
@@ -216,26 +216,48 @@ def plot_country_alignment(df, country, df_dates):
     plt.show()
 
 
-"""def plot_countries_alignment(dfs, countries, number_countries):
+def plot_countries_alignment(dfs, countries, number_countries):
 
-    # merge dfs into one dataframe
-    dfs = pd.concat(dfs, axis = 1)
+    # add columns of parties of dfs[1] and dfs[2] to dfs[0]
+ 
+    true_dfs = dfs[0].join(dfs[1].iloc[:, 1:])
+    true_dfs = true_dfs.join(dfs[2].iloc[:, 1:])
 
+    
+    true_dfs.columns = ["Sample Size"] + list(political_alignment[countries[0]].values()) + list(political_alignment[countries[1]].values()) + list(political_alignment[countries[2]].values())
     alignments = []
-    for i in number_countries:
-        # map each party to its political alignment
-        dfs[i].columns = ["Sample Size"] + list(political_alignment[countries[i]].values())
 
+    for i in range(number_countries):
         # get alignments that appears at least once in the data
         for alignment in dfs[i].columns[1:]:
             if alignment not in alignments:
                 alignments.append(alignment)
         
-        dfs[i] = dfs[i].groupby(dfs[i].columns, axis = 1).sum()
 
-    dfs = pd.concat(dfs, axis = 1)
+    scores = group_date(true_dfs, alignments)
+    scores = linear_interpolation(scores, alignments)
 
-    print(dfs)
+    idxs = scores.index.map(lambda x: x.strftime("%Y-%m"))
+
+    for alignment in alignments:
+        plt.fill_between(
+            idxs,
+            scores["avg_" + alignment] - scores["std_" + alignment],
+            scores["avg_" + alignment] + scores["std_" + alignment],
+            alpha=0.2,
+        )
+        plt.plot(idxs, scores["avg_" + alignment], label=alignment)
+
+    plt.title(f"Political alignment popularity for {countries}")
+    plt.xlabel("Date")
+    plt.xticks(idxs[::3], rotation=45)
+    plt.ylabel("Percentage")
+
+
+
+    plt.legend(loc="lower left")
+    plt.show()
+
 
         # sum columns that belong to the same alignment"""
         
@@ -326,7 +348,7 @@ def plot_pageviews_2(df, country, topic, df_dates):
 
 
     
-def plot_mobility_pageviews_covid(df_transport1, df_pageviews, country, topic, df_dates):
+def plot_mobility_pageviews_covid(df_transport1, df_pageviews, country, df_dates):
     """Plot mobility data for a given country. The data is split into driving and walking data and plotted together."""
     df_drive = df_transport1.loc[country, 'driving']
     df_walk = df_transport1.loc[country, 'walking']
@@ -350,7 +372,7 @@ def plot_mobility_pageviews_covid(df_transport1, df_pageviews, country, topic, d
     plt.subplot(2, 1, 1)
     plt.plot(df_transport)
     plt.ylim(-100, 50)
-    plt.ylabel("Percentage change")
+    plt.ylabel("Percentage change [%]")
     plt.xlim(pd.to_datetime("2020-01-15"), pd.to_datetime("2020-04-20"))
     dates = get_dates(df_dates, country)
     plot_dates(dates)
