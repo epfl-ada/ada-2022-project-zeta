@@ -323,3 +323,55 @@ def plot_pageviews_2(df, country, topic, df_dates):
     plot_dates(dates)
 
     plt.show()
+
+
+    
+def plot_mobility_pageviews_covid(df_transport1, df_pageviews, country, topic, df_dates):
+    """Plot mobility data for a given country. The data is split into driving and walking data and plotted together."""
+    df_drive = df_transport1.loc[country, 'driving']
+    df_walk = df_transport1.loc[country, 'walking']
+    df_transport = pd.concat([df_drive, df_walk], axis=1)
+
+    # convert indexes to datetime 
+    df_transport.index = pd.to_datetime(df_transport.index)
+
+    # keep only rows where date is >  "2020-01-01 and < "2020-04-30"
+    df_transport = df_transport.loc[pd.to_datetime("2020-01-01"):pd.to_datetime("2020-04-20")]
+
+    # Select last available year of data
+    df_clipped = df_pageviews.loc[pd.date_range(pd.to_datetime("2020-01-01"), pd.to_datetime("2020-04-20"))]
+
+    legends = ['Driving', 'Walking', 'First case', 'First death']
+    legends2 = ['First case', 'First death']
+    ticks_x = [pd.to_datetime("2020-01-15"), pd.to_datetime("2020-02-01"), pd.to_datetime("2020-02-15"),
+    pd.to_datetime("2020-03-01"), pd.to_datetime("2020-03-15"), pd.to_datetime("2020-04-01"), pd.to_datetime("2020-04-15")]
+
+    plt.figure(1, figsize=(5, 7))
+    plt.subplot(2, 1, 1)
+    plt.plot(df_transport)
+    plt.ylim(-100, 50)
+    plt.ylabel("Percentage change")
+    plt.xlim(pd.to_datetime("2020-01-15"), pd.to_datetime("2020-04-20"))
+    dates = get_dates(df_dates, country)
+    plot_dates(dates)
+    if dates['Lockdown'] is not pd.NaT:
+        legends.append('Lockdown')
+    plt.title('Percentage of mobility change in {}'.format(country))
+    plt.legend(legends)
+    #plt.xticks(ticks= [],rotation=45)
+    plt.xticks(ticks = ticks_x, labels=[], rotation=45)
+
+    plt.subplot(2, 1, 2)
+    # Rolling average across 14 days
+    plt.plot(df_clipped.index, df_clipped.rolling(14).mean(), color='black', label="_nolegend_")
+    plt.title(f"Daily pageviews for covid related pages {countries[country]}")
+    plt.xlabel("Date")
+    plt.xticks(ticks = ticks_x, rotation=45)
+    plt.ylabel("Pageviews")
+    plt.tight_layout()
+    plt.xlim(pd.to_datetime("2020-01-15"), pd.to_datetime("2020-04-20"))
+    dates = get_dates(df_dates, country)
+    plot_dates(dates)
+    plt.legend(legends2, loc="upper left")
+
+    plt.show()
