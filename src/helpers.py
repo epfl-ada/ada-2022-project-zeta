@@ -2,6 +2,7 @@
 
 from collections import defaultdict
 
+import numpy as np
 import pandas as pd
 from scipy import stats
 
@@ -281,6 +282,123 @@ def calculate_std(col, coeff):
     return (
         (coeff * (col - calculate_mean(col, coeff)) ** 2).sum() / coeff.sum()
     ) ** 0.5
+
+
+def group_date(df, columns):
+    """Compute the weighted mean and standard deviation according to its sample size for each column in columns of the dataframe over a month.
+    
+    Args:
+        df: dataframe
+        columns: list of columns of interest to compute the weighted mean and standard deviation
+       
+    Returns: dataframe containing the weighted mean and standard deviation for each date.
+    """
+
+    df_grouped = df.groupby("Date")
+
+    avg = df_grouped.apply(
+        lambda x: pd.Series(
+            {
+                "avg_" + column: calculate_mean(x[column], x["Sample Size"])
+                for column in columns
+            }
+        )
+    )
+
+    std = df_grouped.apply(
+        lambda x: pd.Series(
+            {
+                "std_" + column: calculate_std(x[column], x["Sample Size"])
+                for column in columns
+            }
+        )
+    )
+
+    return pd.concat([avg, std], axis=1)
+
+
+def linear_interpolation(df, columns):
+    """Fill the missing values in the dataframe by linear interpolation.
+    
+    Args:   
+        df: dataframe
+        columns: list of columns of interest
+    
+    Returns: dataframe with missing values filled by linear interpolation.
+    """
+
+    # List of months
+    date_list = [
+        "2019-01",
+        "2019-02",
+        "2019-03",
+        "2019-04",
+        "2019-05",
+        "2019-06",
+        "2019-07",
+        "2019-08",
+        "2019-09",
+        "2019-10",
+        "2019-11",
+        "2019-12",
+        "2020-01",
+        "2020-02",
+        "2020-03",
+        "2020-04",
+        "2020-05",
+        "2020-06",
+        "2020-07",
+        "2020-08",
+        "2020-09",
+        "2020-10",
+        "2020-11",
+        "2020-12",
+        "2021-01",
+        "2021-02",
+        "2021-03",
+        "2021-04",
+    ]
+
+    # For each date in date_list, check whether it is in the dataframe
+    for i, date in enumerate(date_list):
+        if date not in df.index and i != 0:
+
+            # Save last date that is in the dataframe
+            before_date = date_list[i - 1]
+
+            # Search for the date that is in dataframe
+            new_index = i
+            while (
+                date_list[new_index] not in df.index and new_index < len(date_list) - 1
+            ):
+                new_index += 1
+
+            new_date = date_list[new_index]
+
+            # Number of invalid dates between valid ones
+            number_dates = new_index - i
+
+            # Perform a linear interpolation between date and new_date
+            intervals = np.linspace(0, 1, number_dates + 2)
+
+            nb_interval = 1
+
+            while i != new_index:
+                curr_date = date_list[i]
+                curr_t = intervals[nb_interval]
+
+                for column in columns:
+                    df.loc[curr_date, "avg_" + column] = (1 - curr_t) * df.loc[
+                        before_date, "avg_" + column
+                    ] + curr_t * df.loc[new_date, "avg_" + column]
+                    df.loc[curr_date, "std_" + column] = (1 - curr_t) * df.loc[
+                        before_date, "std_" + column
+                    ] + curr_t * df.loc[new_date, "std_" + column]
+
+                nb_interval += 1
+                i += 1
+
+    return df.sort_index()
 
 
 def polling_data_ttest(country, df_dates):

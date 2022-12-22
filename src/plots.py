@@ -58,29 +58,12 @@ def plot_mobility_response(df, labels=None):
 def plot_polling_data(df, country, df_dates):
     """Plot polling data for a given country. The dataframe `df` is grouped by month, and the mean and standard deviation of each party is plotted."""
 
-    df_grouped = df.groupby("Date")
-
     parties = df.columns[1:]
+    scores = group_date(df, parties)
 
-    # Create dataframe with average and standard deviation for each party
-    avg = df_grouped.apply(
-        lambda x: pd.Series(
-            {
-                "avg_" + party: calculate_mean(x[party], x["Sample Size"])
-                for party in parties
-            }
-        )
-    )
-    std = df_grouped.apply(
-        lambda x: pd.Series(
-            {
-                "std_" + party: calculate_std(x[party], x["Sample Size"])
-                for party in parties
-            }
-        )
-    )
+    # Perform linear interpolation if there are some months with no data
+    scores = linear_interpolation(scores, parties)
 
-    scores = pd.concat([avg, std], axis=1)
     idxs = scores.index.map(lambda x: x.strftime("%Y-%m"))
 
     # Plot data
