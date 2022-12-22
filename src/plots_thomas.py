@@ -79,8 +79,14 @@ def plot_driving_walking_mobility(df, df_dates, country):
     df_walk = df.loc[country, 'walking']
     df_transport = pd.concat([df_drive, df_walk], axis=1)
 
-    # convert indexes to datetime
+    # convert indexes to datetime 
     df_transport.index = pd.to_datetime(df_transport.index)
+
+    # keep only rows where date is >  "2020-01-01 and < "2020-04-30"
+    df_transport = df_transport.loc[pd.to_datetime("2020-01-01"):pd.to_datetime("2020-04-30")]
+
+    # create a figure of a certain size
+    plt.figure(figsize=(7, 4), dpi = 100)
     plt.plot(df_transport)
 
     plt.ylim(-100, 100)
@@ -169,7 +175,7 @@ def plot_polling_data(df, country, df_dates):
 def plot_country_alignment(df, country, df_dates):
 
     # map each party to its political alignment
-    df.columns = ["Sample Size"] + list(political_alignment[country].values())
+    df.columns = ["Sample Size"] + list(political_alignment_2[country].values())
 
     # sum columns that belong to the same alignment
     df = df.groupby(df.columns, axis = 1).sum()
@@ -210,7 +216,7 @@ def plot_country_alignment(df, country, df_dates):
     plt.show()
 
 
-def plot_countries_alignment(dfs, countries, number_countries):
+"""def plot_countries_alignment(dfs, countries, number_countries):
 
     # merge dfs into one dataframe
     dfs = pd.concat(dfs, axis = 1)
@@ -231,7 +237,7 @@ def plot_countries_alignment(dfs, countries, number_countries):
 
     print(dfs)
 
-        # sum columns that belong to the same alignment
+        # sum columns that belong to the same alignment"""
         
 
 
@@ -244,12 +250,14 @@ def plot_pageviews(df, country, topic, df_dates):
     """Plot pageviews data for a given country and topic."""
 
     # Select last available year of data
-    df = df.loc[
-        pd.date_range(pd.to_datetime("2019-08-01"), pd.to_datetime("2020-07-31"))
+    df_clipped = df.loc[
+        pd.date_range(pd.to_datetime("2020-01-01"), pd.to_datetime("2020-04-30"))
     ]
 
+    plt.figure(figsize=(7, 4))
+
     # Rolling average across 14 days
-    plt.plot(df.rolling(14).mean(), label="_nolegend_")
+    plt.plot(df_clipped.index, df_clipped.rolling(14).mean(), label="_nolegend_")
 
     if topic == POLITICS:
         plt.title(f"Daily Pageviews for Politics in {countries[country]}")
@@ -265,6 +273,8 @@ def plot_pageviews(df, country, topic, df_dates):
     plt.ylabel("Pageviews")
     plt.tight_layout()
 
+
+
     plt.axvline(
         x=pd.to_datetime(df_dates.loc[country, "Mobility"].strftime("%Y-%m-%d")),
         color="red",
@@ -278,5 +288,38 @@ def plot_pageviews(df, country, topic, df_dates):
         )
 
     plt.legend(["Abnormal mobility", "Normal mobility"], loc="upper left")
+
+    plt.show()
+
+def plot_pageviews_2(df, country, topic, df_dates):
+    """Plot pageviews data for a given country and topic."""
+
+    # Select last available year of data
+    df_clipped = df.loc[
+        pd.date_range(pd.to_datetime("2020-01-01"), pd.to_datetime("2020-04-30"))
+    ]
+    # print the index of the dataframe
+    plt.figure(figsize=(7, 4), dpi = 100)
+
+    # Rolling average across 14 days
+    
+    plt.plot(df_clipped.index, df_clipped.rolling(14).mean(), label="_nolegend_")
+
+    if topic == POLITICS:
+        plt.title(f"Daily Pageviews for Politics in {countries[country]}")
+    elif topic == N_EUROPE:
+        plt.title(f"Daily Pageviews for Northern Europe in {countries[country]}")
+    elif topic == W_EUROPE:
+        plt.title(f"Daily Pageviews for Western Europe in {countries[country]}")
+    elif topic == S_EUROPE:
+        plt.title(f"Daily Pageviews for Southern Europe in {countries[country]}")
+
+    plt.xlabel("Date")
+    plt.xticks(rotation=45)
+    plt.ylabel("Pageviews")
+    plt.tight_layout()
+
+    dates = get_dates(df_dates, country)
+    plot_dates(dates)
 
     plt.show()
