@@ -423,3 +423,66 @@ def plot_mobility_pageviews_covid(df_transport1, df_pageviews, country, df_dates
     plt.legend(legends2, loc="upper left")
 
     plt.show()
+
+
+def plot_group_alignments(dfs, countries, df_dates, group_name):
+    number_countries = len(countries)
+
+    alignments = ["centre", "left", "right", "centre-left", "centre-right"]
+
+    for i in range(number_countries):
+        # Map each party to its political alignment and sum columns that belong to the same alignment
+        dfs[i].columns = ["Sample Size"] + list(
+            political_alignment[countries[i]].values()
+        )
+        dfs[i] = dfs[i].groupby(dfs[i].columns, axis=1).sum()
+
+    for i in range(number_countries):
+        # Add columns filled with 0s of alignments that are not in the dataframe
+        for alignment in alignments:
+            if alignment not in dfs[i].columns:
+                dfs[i][alignment] = 0
+
+        # Group dataframe by month to obtain weighted mean and standard deviation of each alignment
+        dfs[i] = group_date(dfs[i], alignments)
+
+        # Perform linear interpolation if there are some months with no data
+        dfs[i] = linear_interpolation(dfs[i], alignments)
+
+    # Add scores of each country and divide by the number of countries
+    scores = dfs[0]
+    for i in range(number_countries):
+        scores = scores.add(dfs[i], fill_value=0)
+    scores = scores.div(number_countries)
+
+    idxs = scores.index.map(lambda x: x.strftime("%Y-%m"))
+    # Plot he data
+    for alignment in alignments:
+        plt.fill_between(
+            idxs,
+            scores["avg_" + alignment] - scores["std_" + alignment],
+            scores["avg_" + alignment] + scores["std_" + alignment],
+            alpha=0.2,
+        )
+        plt.plot(idxs, scores["avg_" + alignment], label=alignment)
+
+    plt.title(f"Political alignment popularity for {group_name}")
+    plt.xlabel("Date")
+    plt.xticks(idxs[::3], rotation=45)
+    plt.ylabel("Percentage")
+
+    # Compute latest first death date
+    latest_death = df_dates.loc[countries[0], "1st death"]
+    for i in range(number_countries):
+        if df_dates.loc[countries[i], "1st death"] > latest_death:
+            latest_death = df_dates.loc[countries[i], "1st death"]
+
+    plt.axvline(
+        x=latest_death.strftime("%Y-%m"),
+        color="black",
+        linestyle="--",
+        label="latest 1st death",
+    )
+
+    plt.legend(loc="lower left")
+    plt.show()
