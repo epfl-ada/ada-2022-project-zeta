@@ -6,6 +6,16 @@ Group project using the [Coronawiki](https://github.com/epfl-dlab/wiki_pageviews
 
 In order to rerun the notebook, Coronawiki dataset must be stored in `./data/`.
 
+## Repository Overview
+
+- `analysis.ipynb` - notebook containing our data analysis.
+
+- `src/data_processing.py` - functions to process the data.
+
+- `src/helpers.py` - various helper functions to get, query, and work with the data.
+
+- `src/plots.py` - functions to produce plots.
+
 ## Abstract
 
 In November 2019, the world heard the word CORONAVIRUS, which a few months later became COVID-19. This disease is caused by the SARS-CoV-2 virus which was first discovered in China. From that moment on, the spread of this virus continued to increase. Indeed, the pandemic spread from country to country, and is now present almost everywhere. Millions of people have been infected and over four hundred thousand have died!

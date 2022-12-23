@@ -1,5 +1,3 @@
-"""Functions to process the data."""
-
 import pandas as pd
 
 

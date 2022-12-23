@@ -1,5 +1,3 @@
-"""Various helper functions to get, query, and work with the data."""
-
 from collections import defaultdict
 
 import numpy as np
