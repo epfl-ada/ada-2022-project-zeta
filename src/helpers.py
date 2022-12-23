@@ -1,4 +1,4 @@
-"""Various helper functions to get and query data."""
+"""Various helper functions to get, query, and work with the data."""
 
 from collections import defaultdict
 
@@ -154,82 +154,55 @@ political_alignment = {
     },
 }
 
-# Same as above except change all centre-left to left and centre-right to right
-political_alignment_2 = {
-    "de": {
-        "FDP": "right",
-        "SPD": "left",
-        "CDU/CSU *": "right",
-        "AfD": "right",
-        "GRÜNE": "left",
-    },
-    "dk": {
-        "SD *": "left",
-        "Venstre": "right",
-        "LA": "right",
-        "SF": "left",
-        "Konservative": "right",
-    },
-    "es": {
-        "PP": "right",
-        "PSOE *": "left",
-        "UP": "left",
-        "Cs": "centre",
-        "Vox": "right",
-    },
-    "fi": {
-        "Kesk": "centre",
-        "Kok": "right",
-        "PS": "right",
-        "SDP *": "left",
-        "Vihr": "left",
-    },
-    "fr": {
-        "LFI": "left",
-        "PS": "left",
-        "LREM *": "centre",
-        "LR": "right",
-        "RN": "right",
-    },
-    "it": {
-        "PD (S&D)": "left",
-        "M5S (NI) *": "right",
-        "FI (EPP)": "right",
-        "LEGA (ID)": "right",
-        "FdI (ECR)": "right",
-    },
-    "nl": {
-        "VVD *": "right",
-        "PVV": "right",
-        "CDA": "right",
-        "D66": "centre",
-        "PvdA": "left",
-    },
-    "no": {
-        "SV": "left",
-        "AP": "left",
-        "SP": "left",
-        "Høyre *": "right",
-        "FrP": "right",
-    },
-    "se": {
-        "SSAP *": "left",
-        "MSP": "right",
-        "SD": "right",
-        "CP": "centre",
-        "VP": "left",
-    },
-}
+
+def calculate_mean(col, coeff):
+    """Calculate the weighted mean of a list.
+
+    Args:
+        col: list of values
+        coeff: list of coefficient
+
+    Returns: weighted mean
+    """
+
+    return (col * coeff).sum() / coeff.sum()
+
+
+def calculate_std(col, coeff):
+    """Calculate the standard deviation of a list from a weighted mean.
+    
+    Args:
+        col: list of values
+        coeff: list of coefficient
+
+    Returns: weighted standard deviation
+    """
+
+    return (
+        (coeff * (col - calculate_mean(col, coeff)) ** 2).sum() / coeff.sum()
+    ) ** 0.5
 
 
 def flatten(list):
-    """Flatten a list of lists."""
+    """Flatten a list of lists.
+    
+    Args:
+        list: list of lists.
+    
+    Returns: flattened list."""
 
     return [item for sublist in list for item in sublist]
 
 
 def get_dates(df_dates, country):
-    """Get first case, first death and lockdown dates for a given country."""
+    """Get first case, first death and lockdown dates for a given country.
+    
+    Args:
+        df_dates: dataframe with dates.
+        country: country code.
+        
+    Returns: Series of dates.
+    """
 
     return pd.to_datetime(df_dates.loc[country][["1st case", "1st death", "Lockdown"]])
 
@@ -241,7 +214,7 @@ def get_pageviews(df, lang, topic, measure="sum"):
         df: pageviews (dataframe).
         lang: language code (string).
         topic: page topic or "covid" (string).
-        measure: "sum" or "percent"
+        measure: "sum" or "percent".
 
     Returns:
         Series of dates and topic pageviews.
@@ -295,13 +268,13 @@ def get_polling_data(country, monthly=True):
     """Get polling data for a given country.
 
     Args:
-        country: country code
+        country: country code.
     
     Returns:
         Polling data.
     
     Raises:
-        KeyError: data unavailable for given country
+        KeyError: data unavailable for given country.
     """
 
     # Country codes where polling data is available
@@ -346,46 +319,20 @@ def get_polling_data(country, monthly=True):
     return df
 
 
-def calculate_mean(col, coeff):
-    """Calculate the weighted mean of a list.
-
-    Args:
-        col: list of values
-        coeff: list of coefficient
-
-    Returns: weighted mean
-    """
-
-    return (col * coeff).sum() / coeff.sum()
-
-
-def calculate_std(col, coeff):
-    """Calculate the standard deviation of a list from a weighted mean.
-    
-    Args:
-        col: list of values
-        coeff: list of coefficient
-
-    Returns: weighted standard deviation
-    """
-
-    return (
-        (coeff * (col - calculate_mean(col, coeff)) ** 2).sum() / coeff.sum()
-    ) ** 0.5
-
-
 def group_date(df, columns):
-    """Compute the weighted mean and standard deviation according to its sample size for each column in columns of the dataframe over a month.
+    """Group the dataframe df by month, and compute the weighted mean and standard deviation for each column in columns.
     
     Args:
-        df: dataframe
-        columns: list of columns of interest to compute the weighted mean and standard deviation
+        df: dataframe.
+        columns: list of columns of interest to compute the weighted mean and standard deviation.
        
     Returns: dataframe containing the weighted mean and standard deviation for each date.
     """
 
+    # Group dataframe by date
     df_grouped = df.groupby("Date")
 
+    # Create dataframe containing the average of each columns over a month
     avg = df_grouped.apply(
         lambda x: pd.Series(
             {
@@ -395,6 +342,7 @@ def group_date(df, columns):
         )
     )
 
+    # Create dataframe containing the standard deviation of each columns over a month
     std = df_grouped.apply(
         lambda x: pd.Series(
             {
@@ -404,6 +352,7 @@ def group_date(df, columns):
         )
     )
 
+    # Concatenate dataframes with respect to the date
     return pd.concat([avg, std], axis=1)
 
 
@@ -411,8 +360,8 @@ def linear_interpolation(df, columns):
     """Fill the missing values in the dataframe by linear interpolation.
     
     Args:   
-        df: dataframe
-        columns: list of columns of interest
+        df: dataframe.
+        columns: list of columns of interest.
     
     Returns: dataframe with missing values filled by linear interpolation.
     """
@@ -449,45 +398,45 @@ def linear_interpolation(df, columns):
         "2021-04",
     ]
 
-    # For each date in date_list, check whether it is in the dataframe
     for i, date in enumerate(date_list):
+
+        # For each date in date_list, check whether it is in dataframe
         if date not in df.index and i != 0:
 
-            # Save last date that is in the dataframe
-            before_date = date_list[i - 1]
+            # Save last date that is in dataframe
+            previous_date = date_list[i - 1]
 
-            # Search for the date that is in dataframe
+            # Search for next date that is in dataframe
             new_index = i
             while (
                 date_list[new_index] not in df.index and new_index < len(date_list) - 1
             ):
                 new_index += 1
 
-            new_date = date_list[new_index]
+            next_date = date_list[new_index]
 
             # Number of invalid dates between valid ones
             number_dates = new_index - i
 
             # Perform a linear interpolation between date and new_date
             intervals = np.linspace(0, 1, number_dates + 2)
-
             nb_interval = 1
-
             while i != new_index:
                 curr_date = date_list[i]
                 curr_t = intervals[nb_interval]
 
                 for column in columns:
                     df.loc[curr_date, "avg_" + column] = (1 - curr_t) * df.loc[
-                        before_date, "avg_" + column
-                    ] + curr_t * df.loc[new_date, "avg_" + column]
+                        previous_date, "avg_" + column
+                    ] + curr_t * df.loc[next_date, "avg_" + column]
                     df.loc[curr_date, "std_" + column] = (1 - curr_t) * df.loc[
-                        before_date, "std_" + column
-                    ] + curr_t * df.loc[new_date, "std_" + column]
+                        previous_date, "std_" + column
+                    ] + curr_t * df.loc[next_date, "std_" + column]
 
                 nb_interval += 1
                 i += 1
 
+    # Sort resulting dataframe
     return df.sort_index()
 
 
@@ -496,10 +445,10 @@ def polling_data_ttest(country, df_dates):
     difference in polling immediately before and after the start of the pandemic.
     
     Args:
-        country: country code
-        df_dates: `interventions.csv`
+        country: country code.
+        df_dates: `interventions.csv`.
     
-    Returns: p-value from independent t-test sampling
+    Returns: p-value from independent t-test sampling.
     """
 
     # Get polls for country
