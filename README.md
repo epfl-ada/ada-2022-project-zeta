@@ -8,16 +8,21 @@ In order to rerun the notebook, Coronawiki dataset must be stored in `./data/`.
 
 ## Abstract
 
-During the COVID-19 pandemic, we saw that governments implemented different sanitary measures in order to reduce the strain on their health services. Governments balanced imposing sufficiently stringent measures while at the same time not depriving the populace of too many liberties in order to not lose the public’s support.
+In November 2019, the world heard the word CORONAVIRUS, which a few months later became COVID-19. This disease is caused by the SARS-CoV-2 virus which was first discovered in China. From that moment on, the spread of this virus continued to increase. Indeed, the pandemic spread from country to country, and is now present almost everywhere. Millions of people have been infected and over four hundred thousand have died!
 
-The aim of this project is to analyse how public support for governments and interest in politics changed depending on the response of the government to the pandemic. We would also like to find out which approaches in dealing with the pandemic inspired confidence in the public. We aim to classify government responses based on their swiftness and severity, and then explore how the population's mobility patterns changed. We will then be able to gauge interest in politics through Wikipedia pageview data and evaluate support in the government through polling and election data.
+The pandemic and its rapid spread caused fear worldwide. Sanitary measures and other restrictions were quickly put in place in many countries. Among the decisions taken by government leaders, those relating to individual movement were the most significant. During lockdowns, individuals became confined to their homes, and schools, nurseries, universities, canteens, restaurants, shops (except essential ones), etc., were closed.
+
+At this point, we ask the following question: did the implementation of these restrictions impact political sentiment? How has political sentiment changed over the course of the pandemic?
+
+In this context, it is natural to wonder whether an alignment between political decisions and people's behaviour has been achieved. Have people felt that their leaders need to be more in touch with their concerns and are unable to address the challenges at hand effectively? Has the COVID-19 pandemic, with its restrictions on daily life, sparked a renewed interest in politics among the population? As we examine this dynamic, it is also important to consider the role of the leading political party. Have they received support from the population, or have they faced disapproval for their actions or lack thereof?
 
 ## Research Questions
 
-* Do lax or stringent sanitary measures impact public support in the government? Does this occur everywhere or only in certain regions?
-* Is there a strategy that governments could have taken that retains public support?
-* Are people more likely to flout lockdown rules if they are dissatisfied with the government?
-* Did interest in politics alter during the pandemic and, if so, has this change persisted?
+* Did the implementation of sanitary restrictions impact political sentiment?
+* How has political sentiment changed over the course of the pandemic?
+* Is there alignment between political decisions and people's behaviour during the COVID-19 pandemic?
+* Has the COVID-19 pandemic increased people's interest in politics?
+* How did people's opinions of political parties change in response to COVID-19 interventions?
 
 ## Additional Datasets
 
@@ -47,7 +52,7 @@ We look at pageview data for COVID- and politics-related pages, overlayed with k
 
 ### Step 5: Explore Mobility Data
 
-TODO
+Overlayed with the same key dates, we plot how the mobility changed over the course of the pandemic. Simultaneously, we can compare the progression of the mobility change with the time series of the Wikipedia pageviews of COVID-related pages to see if the two are related.
 
 ## Organisation
 
