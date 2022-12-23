@@ -400,7 +400,7 @@ def plot_mobility_pageviews_covid(df_transport1, df_pageviews, country, df_dates
     plot_dates(dates)
     if dates["Lockdown"] is not pd.NaT:
         legends.append("Lockdown")
-    plt.title("Percentage of mobility change in {}".format(country))
+    plt.title(f"Percentage Mobility Change in {countries[country]}")
     plt.legend(legends)
     plt.xticks(ticks=ticks_x, labels=[], rotation=45)
 
@@ -412,7 +412,7 @@ def plot_mobility_pageviews_covid(df_transport1, df_pageviews, country, df_dates
         color="black",
         label="_nolegend_",
     )
-    plt.title(f"Daily pageviews for covid related pages {countries[country]}")
+    plt.title(f"Daily Pageviews for COVID Pages in {countries[country]}")
     plt.xlabel("Date")
     plt.xticks(ticks=ticks_x, rotation=45)
     plt.ylabel("Pageviews")
@@ -466,7 +466,7 @@ def plot_group_alignments(dfs, countries, df_dates, group_name):
         )
         plt.plot(idxs, scores["avg_" + alignment], label=alignment)
 
-    plt.title(f"Political alignment popularity for {group_name}")
+    plt.title(f"Political Alignment Popularity for {group_name}")
     plt.xlabel("Date")
     plt.xticks(idxs[::3], rotation=45)
     plt.ylabel("Percentage")

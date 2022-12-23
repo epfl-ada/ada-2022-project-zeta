@@ -1,5 +1,11 @@
 # How Has Political Sentiment Changed Over the Course of the Pandemic?
 
+EPFL Applied Data Analysis Course, Autumn 2022
+
+Group project using the [Coronawiki](https://github.com/epfl-dlab/wiki_pageviews_covid) dataset.
+
+In order to rerun the notebook, Coronawiki dataset must be stored in `./data/`.
+
 ## Abstract
 
 During the COVID-19 pandemic, we saw that governments implemented different sanitary measures in order to reduce the strain on their health services. Governments balanced imposing sufficiently stringent measures while at the same time not depriving the populace of too many liberties in order to not lose the public’s support.
@@ -13,7 +19,7 @@ The aim of this project is to analyse how public support for governments and int
 * Are people more likely to flout lockdown rules if they are dissatisfied with the government?
 * Did interest in politics alter during the pandemic and, if so, has this change persisted?
 
-## Proposed Additional Datasets
+## Additional Datasets
 
 [European Opinion Polls as Open Data](https://filipvanlaenen.github.io/eopaod/)
 
@@ -27,21 +33,21 @@ The CSV data contains results from various national polls. We would like to work
 
 We create methods to pull the up-to-date polling data from the webpage and process both it and the Coronawiki data. With the data available in the format that we want, we are ready to perform an analysis of the data.
 
-### Step 2: Explore Mobility Data
-
-TODO
-
-### Step 3: Characterise Government Responses
+### Step 2: Characterise Government Responses
 
 To evaluate how swift and stringent a government’s response to the pandemic was, we use the interventions data to determine how soon sanitary measures were put in place after COVID first appeared in the country, and for how long the population's mobility was affected. We use clustering methods to group countries based off of their response.
 
-### Step 4: Explore polling data
+### Step 3: Explore polling data
 
 With the scraped polling data, we plot how the popularity of the main political parties varied in the run-up to and during the pandemic. We observe how polling changed as a response to different "milestones" of the pandemic (such as the first case or the first death). We then use statistical testing to gather evidence to support our observations.
 
-### Step 5: Analyse Wikipedia Pageview Data
+### Step 4: Analyse Wikipedia Pageview Data
 
 We look at pageview data for COVID- and politics-related pages, overlayed with key dates from the interventions data. Using visual methods, we look for similar behaviours that occur between populations in countries within the same group and observe the exponential increase in interest COVID experienced in the first stages of the pandemic.
+
+### Step 5: Explore Mobility Data
+
+TODO
 
 ## Organisation
 
