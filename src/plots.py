@@ -247,77 +247,102 @@ def plot_group_alignments(dfs, countries, df_dates, group_name):
 
 
 def plot_mobility_pageviews_covid(df_transport, df_pageviews, country, df_dates):
-    """Plot mobility data for a given country. The data is split into driving and walking data and plotted together.
+    """Plot the mobility data and the pageview data for a given country.
     
     Args:
-        df_transport: dataframe containing Apple mobility data
-        df_pageviews: dataframe containing pageview data
-        country: country code
-        df_dates: `interventions.csv`
+        df_transport: dataframe containing Apple mobility data.
+        df_pageviews: dataframe containing pageview data.
+        country: country code.
+        df_dates: dataframe containing dates of first case, first death and lockdown.
     """
 
+    # Retrieve the driving data for the given country
     df_drive = df_transport.loc[country, "driving"]
+    # Retrieve the walking data for the given country
     df_walk = df_transport.loc[country, "walking"]
+    # Concatenate the two dataframes
     df_transport = pd.concat([df_drive, df_walk], axis=1)
 
-    # Convert indices to datetime
+    # Convert index to datetime
     df_transport.index = pd.to_datetime(df_transport.index)
 
-    # Keep only rows where date is between 2020-01-01 and 2020-04-30
+    # Clip transport dataframe to the period of interest
     df_transport = df_transport.loc[
         pd.to_datetime("2020-01-01") : pd.to_datetime("2020-04-20")
     ]
 
-    # Select last available year of data
+    # Clip pageviews dataframe to the period of interest
     df_clipped = df_pageviews.loc[
         pd.date_range(pd.to_datetime("2020-01-01"), pd.to_datetime("2020-04-20"))
     ]
 
     legends = ["Driving", "Walking", "First case", "First death"]
-    legends2 = ["First case", "First death"]
-    ticks_x = [
-        pd.to_datetime("2020-01-15"),
-        pd.to_datetime("2020-02-01"),
-        pd.to_datetime("2020-02-15"),
-        pd.to_datetime("2020-03-01"),
-        pd.to_datetime("2020-03-15"),
-        pd.to_datetime("2020-04-01"),
-        pd.to_datetime("2020-04-15"),
+
+    # Set values of the x-axis ticks
+    ticks_x: list[str] = [
+        pd.to_datetime("2020-01-15").strftime("%Y-%m"),
+        pd.to_datetime("2020-02-01").strftime("%Y-%m"),
+        pd.to_datetime("2020-02-15").strftime("%Y-%m"),
+        pd.to_datetime("2020-03-01").strftime("%Y-%m"),
+        pd.to_datetime("2020-03-15").strftime("%Y-%m"),
+        pd.to_datetime("2020-04-01").strftime("%Y-%m"),
+        pd.to_datetime("2020-04-15").strftime("%Y-%m"),
     ]
 
-    plt.figure(1, figsize=(5, 7))
-    plt.subplot(2, 1, 1)
-    plt.plot(df_transport)
-    plt.ylim(-100, 50)
-    plt.ylabel("Percentage change [%]")
-    plt.xlim(pd.to_datetime("2020-01-15"), pd.to_datetime("2020-04-20"))
-    dates = get_dates(df_dates, country)
-    plot_dates(dates)
-    if dates["Lockdown"] is not pd.NaT:
-        legends.append("Lockdown")
-    plt.title(f"Percentage Mobility Change in {countries[country]}")
-    plt.legend(legends)
-    plt.xticks(ticks=ticks_x, labels=[], rotation=45)
+    # Plot subplots
+    fig, (ax1, ax2) = plt.subplots(2, sharex=True, figsize=(7, 7))
 
-    plt.subplot(2, 1, 2)
-    # Rolling average across 14 days
-    plt.plot(
+    # Plot the driving and walking data
+    ax1.plot(df_transport)
+    # Plot the first case and first death
+    ax2.plot(
         df_clipped.index,
         df_clipped.rolling(14).mean(),
         color="black",
-        label="_nolegend_",
+        label="nolegend",
     )
-    plt.title(f"Daily Pageviews for COVID Pages in {countries[country]}")
-    plt.xlabel("Date")
-    plt.xticks(ticks=ticks_x, rotation=45)
-    plt.ylabel("Pageviews")
-    plt.tight_layout()
-    plt.xlim(pd.to_datetime("2020-01-15"), pd.to_datetime("2020-04-20"))
-    dates = get_dates(df_dates, country)
-    plot_dates(dates)
-    plt.legend(legends2, loc="upper left")
 
-    plt.show()
+    ax1.set_title(f"Percentage Mobility Change in {countries[country]}")
+    ax2.set_title(f"Daily Pageviews for COVID-Related Pages in {countries[country]}")
+
+    ax1.set_ylabel("Percentage change [%]")
+    ax2.set_ylabel("Pageviews")
+
+    ax2.set_xlabel("Date")
+    ax2.set_xticklabels(ticks_x, rotation=45)
+
+    ax1.set_ylim(-100, 50)
+
+    for ax in [ax1, ax2]:
+        # Plot vertical line representing the date of the first case
+        ax.axvline(
+            x=pd.to_datetime(df_dates.loc[country, "1st case"].strftime("%Y-%m-%d")),
+            color="green",
+            linestyle="--",
+            label="1st case",
+        )
+        # Plot vertical line representing the date of the first death
+        ax.axvline(
+            x=pd.to_datetime(df_dates.loc[country, "1st death"].strftime("%Y-%m-%d")),
+            color="red",
+            linestyle="--",
+            label="1st death",
+        )
+        # Plot vertical line representing the date of the lockdown
+        if country != "nl" and country != "se" and country != "fi":
+            ax.axvline(
+                x=pd.to_datetime(
+                    df_dates.loc[country, "Lockdown"].strftime("%Y-%m-%d")
+                ),
+                color="black",
+                linestyle="--",
+                label="lockdown",
+            )
+            legends.append("lockdown")
+
+    # Set legend
+    ax1.legend(legends, loc="lower left")
+    fig.show()
 
 
 def plot_mobility_response(df, labels=None):
@@ -343,51 +368,7 @@ def plot_mobility_response(df, labels=None):
     plt.ylabel("Reduced mobility (days)")
 
 
-def plot_pageviews(df, country, topic, df_dates):
-    """Plot pageviews data for a given country and topic.
-
-    Args:
-        df: dataframe containing pageviews data.
-        country: country code.
-        topic: topic of the pageviews.
-        df_dates: dataframe containing dates of first case, first death and lockdown."""
-
-    # Select last available year of data
-    df = df.loc[
-        pd.date_range(pd.to_datetime("2019-08-01"), pd.to_datetime("2020-07-31"))
-    ]
-
-    # Rolling average across 14 days
-    plt.plot(df.rolling(14).mean(), label="_nolegend_")
-
-    if topic == POLITICS:
-        plt.title(f"Daily Pageviews for Politics in {countries[country]}")
-
-    plt.xlabel("Date")
-    plt.xticks(rotation=45)
-    plt.ylabel("Pageviews")
-    plt.tight_layout()
-
-    # Plot line representing starting date of abnormal mobility
-    plt.axvline(
-        x=pd.to_datetime(df_dates.loc[country, "Mobility"].strftime("%Y-%m-%d")),
-        color="red",
-        linestyle="--",
-    )
-    # Plot line representing return date of normal mobility
-    if country != "es":
-        plt.axvline(
-            x=pd.to_datetime(df_dates.loc[country, "Normalcy"].strftime("%Y-%m-%d")),
-            color="green",
-            linestyle="--",
-        )
-
-    plt.legend(["Abnormal mobility", "Normal mobility"], loc="upper left")
-
-    plt.show()
-
-
-def plot_pageviews2(df_pageviews, country, df_dates):
+def plot_pageviews(df_pageviews, country, df_dates):
     """Plot pageviews data for COVID and politics related pages for a given country.
 
     Args:
