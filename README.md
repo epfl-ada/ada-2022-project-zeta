@@ -4,6 +4,8 @@ EPFL Applied Data Analysis Course, Autumn 2022
 
 Group project using the [Coronawiki](https://github.com/epfl-dlab/wiki_pageviews_covid) dataset.
 
+View the data story [here](https://epfl-ada.github.io/ada-zeta-website/).
+
 In order to rerun the notebook, Coronawiki dataset must be stored in `./data/`.
 
 ## Repository Overview
