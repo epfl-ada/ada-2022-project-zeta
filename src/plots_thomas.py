@@ -135,7 +135,7 @@ def plot_group_alignments(dfs, countries, df_dates, group_name):
     # add the scores of each country and divide by the number of countries
     scores = dfs[0]
     for i in range(number_countries):
-        scores = scores.add(dfs[i].iloc[:, 1:], fill_value=0)
+        scores = scores.add(dfs[i], fill_value=0)
     scores = scores.div(number_countries)
 
 
